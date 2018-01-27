@@ -13,6 +13,8 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 lib LibC
+	fun getuid() : UidT
+
 	fun setuid(uid : UidT) : Int
 	fun setgid(gid : GidT) : Int
 end
