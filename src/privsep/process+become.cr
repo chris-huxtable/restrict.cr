@@ -38,4 +38,10 @@ class Process
 		raise Errno.new("The calling process was not privileged.") if ( LibC.setgid(group) != 0 )
 		raise Errno.new("The calling process was not privileged.") if ( LibC.setuid(user) != 0 )
 	end
+
+	# Returns if the process is running as root.
+	def self.root?() : Bool
+		return ( LibC.getuid == 0 )
+	end
+
 end
