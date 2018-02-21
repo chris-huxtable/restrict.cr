@@ -12,7 +12,13 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-require "./privsep/*"
+{% skip_file() if flag?(:windows) %}
 
-module Privsep
+lib LibC
+	fun getuid() : UidT
+
+	fun setuid(uid : UidT) : Int
+	fun setgid(gid : GidT) : Int
+
+	fun chroot(dirname : Char*) : Int
 end

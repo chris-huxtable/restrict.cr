@@ -1,6 +1,6 @@
-# privsep.cr
+# restrict.cr
 
-Adds primitive privilege separation to Crystal.
+Adds primitive privilege separation, and chroot to Crystal.
 Currently only tested on OpenBSD and macOS.
 
 **Note:** This shard will be removed once similar functionality is [added to the standard library](https://github.com/crystal-lang/crystal/pull/5627).
@@ -11,19 +11,38 @@ Add this to your application's `shard.yml`:
 
 ```yaml
 dependencies:
-  privsep:
-    github: chris-huxtable/privsep.cr
+  restrict:
+    github: chris-huxtable/restrict.cr
 ```
 
 ## Usage
 
 ```crystal
-require "privsep"
+require "restrict"
 ```
 
-Restricting a process:
+Restricting:
+``` crystal
+Process.restrict("/var/empty", "user", "group")
+# restricted environment
+```
+or,
+``` crystal
+Process.restrict("/var/empty", "user", "group", should_wait: true) {
+  # restricted environment
+}
+
+# runs after block completes. `should_wait: false` will not wait until block completes.
+```
+
+Dropping privileges:
 ``` crystal
 Process.become("user", "group")
+```
+
+Chrooting:
+``` crystal
+Process.chroot("/var/empty")
 ```
 
 ## Contributing
