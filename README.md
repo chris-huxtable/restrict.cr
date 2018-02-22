@@ -3,7 +3,10 @@
 Adds primitive privilege separation, and chroot to Crystal.
 Currently only tested on OpenBSD and macOS.
 
-**Note:** This shard will be removed once similar functionality is [added to the standard library](https://github.com/crystal-lang/crystal/pull/5627).
+**Note:** This shard will be removed once similar functionality is added to the standard library.
+- [become](https://github.com/crystal-lang/crystal/pull/5627).
+- [chroot](https://github.com/crystal-lang/crystal/pull/5577).
+- restrict
 
 ## Installation
 
@@ -28,11 +31,11 @@ Process.restrict("/var/empty", "user", "group")
 ```
 or,
 ``` crystal
-Process.restrict("/var/empty", "user", "group", should_wait: true) {
+Process.restrict("/var/empty", "user", "group", wait: true) {
   # restricted environment
 }
 
-# runs after block completes. `should_wait: false` will not wait until block completes.
+# runs after block completes. `wait: false` will not wait until block completes.
 ```
 
 Dropping privileges:

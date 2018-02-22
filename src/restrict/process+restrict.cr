@@ -26,8 +26,8 @@ class Process
 	# ```
 	# Process.restrict("/var/empty", "nobody", "nobody")
 	# ```
-	def self.restrict(path : String, user : String, group : String) : Nil
-		chroot(path)
+	def self.restrict(path : String? = nil, user : Int|String|Nil = -1, group : Int|String|Nil = -1) : Nil
+		chroot(path) if path
 		become(user, group)
 	end
 
@@ -36,17 +36,17 @@ class Process
 	# specified before yielding to the given block.
 	#
 	# ```
-	# Process.restrict("/var/empty", "nobody", "nobody", should_wait: true) {
+	# Process.restrict("/var/empty", "nobody", "nobody", wait: true) {
 	#   # New restricted process
 	# }
 	# ```
-	def self.restrict(path : String, user : String, group : String, should_wait : Bool = true, &block) : self
+	def self.restrict(path : String? = nil, user : Int|String|Nil = -1, group : Int|String|Nil = -1, wait : Bool = true, &block) : self
 		proc = Process.fork() {
 			restrict(path, user, group)
 			yield()
 		}
 
-		proc.wait if should_wait
+		proc.wait if wait
 		return proc
 	end
 end
