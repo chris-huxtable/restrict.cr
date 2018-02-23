@@ -26,9 +26,39 @@ class Process
 	# ```
 	# Process.restrict("/var/empty", "nobody", "nobody")
 	# ```
-	def self.restrict(path : String? = nil, user : Int|String|Nil = -1, group : Int|String|Nil = -1) : Nil
+	def self.restrict(path : String? = nil, user : String|Nil = -1, group : String|Nil = -1) : Nil
+
+		if ( user )
+			user.check_no_null_byte
+			user = LibC.getpwnam(user)
+			raise "User not found." if ( user.null? )
+			user = user.value.pw_uid
+		else
+			user = -1
+		end
+
+		if ( group )
+			group.check_no_null_byte
+			group = LibC.getgrnam(group)
+			raise "Group not found." if ( group.null? )
+			group = group.value.gr_gid
+		else
+			group = -1
+		end
+
+		restrict(path, user, group)
+	end
+
+	def self.restrict(path : String? = nil, uid : Int = -1, gid : Int = -1) : Nil
 		chroot(path) if path
-		become(user, group)
+
+		if ( gid != -1 )
+			raise Errno.new("The calling process was not privileged.") if ( LibC.setgid(gid) != 0 )
+		end
+
+		if ( uid != -1 )
+			raise Errno.new("The calling process was not privileged.") if ( LibC.setuid(uid) != 0 )
+		end
 	end
 
 	# Forks the current process then changes the root directory and the current working

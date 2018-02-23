@@ -27,37 +27,13 @@ class Process
 	def self.become(user : String? = nil, group : String? = nil) : Nil
 		raise "No credentials given for the process to become." if ( !user && !group)
 
-		if ( user )
-			user.check_no_null_byte
-			user = LibC.getpwnam(user)
-			raise "User not found." if ( user.null? )
-			user = user.value.pw_uid
-		else
-			user = -1
-		end
-
-		if ( group )
-			group.check_no_null_byte
-			group = LibC.getgrnam(group)
-			raise "Group not found." if ( group.null? )
-			group = group.value.gr_gid
-		else
-			group = -1
-		end
-
-		become(user, group)
+		restrict(nil, user, group)
 	end
 
 	def self.become(uid : Int = -1, gid : Int = -1) : Nil
 		raise "No credentials given for the process to become." if ( uid == -1 && gid == -1)
 
-		if ( gid != -1 )
-			raise Errno.new("The calling process was not privileged.") if ( LibC.setgid(gid) != 0 )
-		end
-
-		if ( uid != -1 )
-			raise Errno.new("The calling process was not privileged.") if ( LibC.setuid(uid) != 0 )
-		end
+		restrict(nil, uid, gid)
 	end
 
 	# Returns if the process is running as root.
