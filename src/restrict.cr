@@ -12,4 +12,54 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-require "./restrict/*"
+require "./lib_c/unistd"
+
+require "chroot"
+require "user_group"
+
+class Process
+
+	# Changes the root directory and the current working directory for the current
+	# process and sets the real, effective, and saved user and group for the current
+	# process to the ones specified.
+	#
+	# ```
+	# Process.restrict("/var/empty", "nobody", "nobody")
+	# ```
+	def self.restrict(path : String? = nil, user : String|Int|Nil = nil, group : String|Int|Nil = nil) : Nil
+		user = System::User.get(user) if ( user.is_a?(String) || user.is_a?(Int) )
+		group = System::User.get(group) if ( group.is_a?(String) || group.is_a?(Int) )
+
+		restrict(path, user, group)
+	end
+
+	# :ditto:
+	def self.restrict(path : String? = nil, user : System::User?, group : System::Group?) : Nil
+		chroot(path) if ( path )
+
+		become(group) if ( user )
+		become(user) if ( group )
+	end
+
+
+	# Forks the current process then changes the root directory and the current working
+	# directory and sets the real, effective, and saved user and group to the ones
+	# specified before yielding to the given block.
+	#
+	# ```
+	# Process.restrict("/var/empty", "nobody", "nobody", wait: true) {
+	#   # New restricted process
+	# }
+	# ```
+	def self.restrict(path : String? = nil, user : Int|String|Nil = -1, group : Int|String|Nil = -1, wait : Bool = true, &block) : Process?
+		proc = Process.fork() {
+			restrict(path, user, group)
+			yield()
+		}
+
+		return nil if ( !wait )
+
+		proc.wait
+		return proc
+	end
+end
