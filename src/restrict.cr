@@ -34,7 +34,7 @@ class Process
 	end
 
 	# :ditto:
-	def self.restrict(path : String? = nil, user : System::User?, group : System::Group?) : Nil
+	def self.restrict(path : String? = nil, user : System::User? = nil, group : System::Group? = nil) : Nil
 		chroot(path) if ( path )
 
 		become(group) if ( user )
