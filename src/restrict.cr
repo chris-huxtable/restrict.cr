@@ -27,7 +27,7 @@ class Process
 	# ```
 	def self.restrict(path : String? = nil, user : String|Int|Nil = nil, group : String|Int|Nil = nil) : Nil
 		user = System::User.get(user) if ( user.is_a?(String) || user.is_a?(Int) )
-		group = System::User.get(group) if ( group.is_a?(String) || group.is_a?(Int) )
+		group = System::Group.get(group) if ( group.is_a?(String) || group.is_a?(Int) )
 
 		restrict(path, user, group)
 	end
