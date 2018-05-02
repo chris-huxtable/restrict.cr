@@ -21,12 +21,12 @@ require "restrict"
 ```
 
 Restricting:
-``` crystal
+```crystal
 Process.restrict("/var/empty", "user", "group")
 # restricted environment
 ```
 or,
-``` crystal
+```crystal
 Process.restrict("/var/empty", "user", "group", wait: true) {
   # restricted environment
 }
