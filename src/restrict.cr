@@ -56,9 +56,10 @@ class Process
 			yield()
 		}
 
-		return nil if ( !wait )
+		return proc if ( !wait )
 
 		proc.wait
-		return proc
+		return nil
 	end
+
 end
