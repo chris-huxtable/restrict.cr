@@ -1,4 +1,6 @@
 # restrict.cr
+[![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://chris-huxtable.github.io/restrict.cr/)
+[![GitHub release](https://img.shields.io/github/release/chris-huxtable/atomic_write.cr.svg)](https://github.com/chris-huxtable/restrict.cr/releases)
 
 Simplifies privilege separation, and chroot in Crystal.
 
