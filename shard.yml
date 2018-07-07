@@ -10,3 +10,4 @@ authors:
 dependencies:
   user_group:
     github: chris-huxtable/user_group.cr
+    version: ~> 0.1.3

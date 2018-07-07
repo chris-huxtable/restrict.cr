@@ -35,8 +35,8 @@ class Process
 	def self.restrict(path : String? = nil, user : System::User? = nil, group : System::Group? = nil) : Nil
 		chroot(path) if ( path )
 
-		become(group) if ( user )
-		become(user) if ( group )
+		self.group = group if ( user )
+		self.user = user if ( group )
 	end
 
 
