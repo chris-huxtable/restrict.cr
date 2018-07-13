@@ -17,6 +17,10 @@ require "user_group"
 
 class Process
 
+	alias UserTypes = System::User|Int32|UInt32|String
+	alias GroupTypes = System::Group|Int32|UInt32|String
+
+
 	# Changes the root directory and the current working directory for the current
 	# process and sets the real, effective, and saved user and group for the current
 	# process to the ones specified.
@@ -24,21 +28,15 @@ class Process
 	# ```
 	# Process.restrict("/var/empty", "nobody", "nobody")
 	# ```
-	def self.restrict(path : String? = nil, user : String|Int|Nil = nil, group : String|Int|Nil = nil) : Nil
+	def self.restrict(path : String? = nil, user : UserTypes? = nil, group : GroupTypes? = nil) : Nil
 		user = System::User.get(user) if ( user.is_a?(String) || user.is_a?(Int) )
 		group = System::Group.get(group) if ( group.is_a?(String) || group.is_a?(Int) )
 
-		restrict(path, user, group)
-	end
-
-	# :ditto:
-	def self.restrict(path : String? = nil, user : System::User? = nil, group : System::Group? = nil) : Nil
 		chroot(path) if ( path )
 
-		self.group = group if ( user )
-		self.user = user if ( group )
+		self.group = group if ( group )
+		self.user = user if ( user )
 	end
-
 
 	# Forks the current process then changes the root directory and the current working
 	# directory and sets the real, effective, and saved user and group to the ones
@@ -49,7 +47,7 @@ class Process
 	#   # New restricted process
 	# }
 	# ```
-	def self.restrict(path : String? = nil, user : Int|String|Nil = -1, group : Int|String|Nil = -1, wait : Bool = true, &block) : Process?
+	def self.restrict(path : String? = nil, user : UserTypes? = -1, group : GroupTypes? = -1, wait : Bool = true, &block) : Process?
 		proc = Process.fork() {
 			restrict(path, user, group)
 			yield()
